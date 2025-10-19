@@ -1,0 +1,54 @@
+@startuml
+
+label "SCHOOL MANAGMENET SYSTEM"
+
+component "Admin" #FFA500
+component "Teacher User" #FFA500
+
+artifact "School Management Management"{
+    
+    artifact "Back-end"{
+    component "Login and account Registration" #FFA500
+    entity 1 #800080
+    component "System Dashboard" #FFA500
+    entity 2 #800080
+    component "School Information Management" #FFA500
+    }
+    
+    entity 3 #800080
+
+    artifact "Front-end"{
+    component "School Information" #FFA500
+    component "List of courses offered" #FFA500
+    component "Enrollment Requirements" #FFA500
+    }
+}
+interface 4 #800080
+interface 5 #800080
+interface 6 #800080
+
+component "Student User" #FFA500
+
+label "COMPONENT DIAGRAM"
+
+[Admin] - 4
+[Teacher User] - 5
+Admin ..> [Login and account Registration]
+[Teacher User] ..> [Login and account Registration]
+
+[Login and account Registration] - 1
+1 - [System Dashboard]
+[System Dashboard] - 2
+2 - [School Information Management]
+[System Dashboard] - 3
+
+3 - [School Information]
+3 - [List of courses offered]
+3 - [Enrollment Requirements]
+
+[Student User] ..> [School Information]
+[Student User] ..> [List of courses offered]
+[Student User] ..> [Enrollment Requirements]
+[Student User] - 6
+
+@enduml

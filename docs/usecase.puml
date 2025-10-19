@@ -1,0 +1,37 @@
+@startuml
+
+actor "Guest" as guest
+actor "Student" as student
+actor "Teacher" as teacher
+actor "Payment system" as pay_sys
+actor "Administrator" as admin
+
+artifact "E-learning platform"{
+    storage "Register / Login" as reg_log
+    storage "Browse courses" as browse_co
+    storage "Sign for course" as sign_co
+    storage "Pay for course" as pay_co
+    storage "Grade" as grade
+    storage "Browse grades" as br_grade
+    storage "Create course" as create_co
+    storage "<<CRUD>> Manage users" as manage_us
+    storage "<<CRUD>> Manage courses" as manage_co
+}
+
+guest --> reg_log
+guest --> browse_co
+
+student ..|> guest
+student --> sign_co
+sign_co ..> pay_co: "<include>"
+student --> browse_co
+
+teacher --> grade
+teacher --> create_co
+create_co ..> manage_co: "<include>"
+teacher -- manage_co
+
+manage_us -- admin
+pay_co --> pay_sys
+
+@enduml

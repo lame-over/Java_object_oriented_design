@@ -1,0 +1,30 @@
+@startuml
+
+|"Student"|
+start
+:Log in;
+if (Valid username) is (No) then
+:Invalid username and password;
+:Request valid username and password from administrator;
+detach
+else (Yes)
+
+|"System"|
+:Show Students Dashboard;
+:Upload Documents;
+
+|"Program Coordinator"|
+:Show Uploaded Documents record;
+:View Students Documents;
+:Verify Student's Documents;
+
+|"System"|
+:View Status;
+:Store And Display Data;
+
+|"Student"|
+:Log out;
+
+stop
+
+@enduml
