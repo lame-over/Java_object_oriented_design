@@ -1,54 +1,148 @@
-@startuml
+@startuml LMS Class Diagram
+title Діаграма класів системи LMS
 
-label "SCHOOL MANAGMENET SYSTEM"
-
-component "Admin" #FFA500
-component "Teacher User" #FFA500
-
-artifact "School Management Management"{
-    
-    artifact "Back-end"{
-    component "Login and account Registration" #FFA500
-    entity 1 #800080
-    component "System Dashboard" #FFA500
-    entity 2 #800080
-    component "School Information Management" #FFA500
-    }
-    
-    entity 3 #800080
-
-    artifact "Front-end"{
-    component "School Information" #FFA500
-    component "List of courses offered" #FFA500
-    component "Enrollment Requirements" #FFA500
-    }
+' Абстрактний клас
+abstract class Training_Participant {
+  # {abstract} name: String
+  # {abstract} email: String
+  # registration_date: Date
+  + {abstract} training_participant(name: String, email: String)
+  + {abstract} get_profile(): String
+  + {abstract} authorization(): boolean
 }
-interface 4 #800080
-interface 5 #800080
-interface 6 #800080
 
-component "Student User" #FFA500
+' Інтерфейс
+interface Educational_schedule {
+  + {abstract} get_schedule(): Map<Date, String>
+  + {abstract} deadline_check(): List<Exercise>
+  + {abstract} show_curriculum(): String
+}
 
-label "COMPONENT DIAGRAM"
+' Основні класи
+class Student {
+  - student_id: String
+  - course: int
+  - payment_status: boolean
+  - average_score: double
+  + Student(name: String, email: String, student_id: String)
+  + pay_course(course: Course): boolean
+  + file_an_appeal(exercise: Exercise, reason: String): Appeal
+  + show_grades(): Map<Exercise, Double>
+  + {final} get_academic_certificate(): String
+}
 
-[Admin] - 4
-[Teacher User] - 5
-Admin ..> [Login and account Registration]
-[Teacher User] ..> [Login and account Registration]
+class Teacher {
+  - scientific_degree: String
+  - cathedra: String
+  - experience: int
+  - course_list: List<Course>
+  + Teacher(name: String, email: String, scientific_degree: String)
+  + check_exercise(exercise: Exercise): double
+  + поставитиОцінку(student: Student, exercise: Exercise, grade: double): void
+  + створитиExercise(course: Course, name: String): Exercise
+  + переглянутиАпеляції(): List<Appeal>
+}
 
-[Login and account Registration] - 1
-1 - [System Dashboard]
-[System Dashboard] - 2
-2 - [School Information Management]
-[System Dashboard] - 3
+class Administrator {
+  - department: String
+  - access_level: int
+  - phone: String
+  + Administrator(name: String, email: String, department: String)
+  + налаштуватиДедлайни(exercise: Exercise, deadline: Date): void
+  + manage_access(користувач: training_participant, course: Course): boolean
+  + create_course(name: String, description: String): Course
+  + view_statistic(): String
+}
 
-3 - [School Information]
-3 - [List of courses offered]
-3 - [Enrollment Requirements]
+' Додаткові класи
+class Course {
+  - code: String
+  - name: String
+  - description: String
+  - credits: int
+  - price: double
+  + Course(code: String, name: String)
+  + add_student(student: Student): boolean
+  + add_exercise(exercise: Exercise): void
+  + get_student_list(): List<Student>
+  + get_(): List<Exercise>
+}
 
-[Student User] ..> [School Information]
-[Student User] ..> [List of courses offered]
-[Student User] ..> [Enrollment Requirements]
-[Student User] - 6
+class Exercise {
+  - id: int
+  - name: String
+  - description: String
+  - deadline: Date
+  - max_score: double
+  - file: String
+  - grade: double
+  + Exercise(name: String, deadline: Date)
+  + upload_file(шлях: String): boolean
+  + get_score(): double
+  + amount_check(): boolean
+  + submit_work(student: Student): boolean
+  + plagiarism_check(): boolean
+  + get_status(): String
+}
+
+class Appeal {
+  - id: int
+  - submission_date: Date
+  - reason: String
+  - status: String
+  - decision: String
+  + Appeal(student: Student, exercise: Exercise, reason: String)
+  + consider(teacher: Teacher): void
+  + update_status(status: String): void
+  + get_info(): String
+}
+
+' Зв'язки наслідування
+Training_Participant <|-- Student
+Training_Participant <|-- Teacher
+Training_Participant <|-- Administrator
+
+' Зв'язки реалізації інтерфейсу
+Educational_schedule <|.. Student
+Educational_schedule <|.. Teacher
+Educational_schedule <|.. Administrator
+
+' Зв'язки агрегації
+Course o-- "1..*" Student
+Course o-- "1..*" Exercise
+Administrator o-- "0..*" Course
+
+' Зв'язки композиції
+Appeal *-- "1" Exercise
+Appeal *-- "1" Student
+
+' Зв'язки залежності
+Student --> Course
+Student --> Appeal
+Teacher --> Exercise
+Teacher --> Appeal
+
+note top of Training_Participant
+  <b>Абстрактний клас</b>
+  Інкапсулює спільну поведінку
+  всіх учасників навчального процесу
+end note
+
+note right of Educational_schedule
+  <b>Інтерфейс</b>
+  Визначає контракт для роботи
+  з освітнім розкладом
+end note
+
+note left of Student
+  <b>Фінальний метод:</b>
+  get_academic_certificate()
+end note
+
+legend bottom
+  <b>Типи зв'язків:</b>
+  | Наслідування | Реалізація | Агрегація | Композиція | Залежність |
+  | <:-- | <.. | o-- | *-- | --> |
+end legend
 
 @enduml
